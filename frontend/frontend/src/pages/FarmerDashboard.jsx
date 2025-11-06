@@ -86,7 +86,7 @@ export default function FarmerDashboard() {
     borderRadius: 14,
     boxShadow: "0 5px 26px rgba(44,110,40,.08)",
     margin: "0 auto",
-    maxWidth: 900,
+    maxWidth: 2900,
   };
 
   return (
@@ -94,7 +94,7 @@ export default function FarmerDashboard() {
       style={{
         padding: 20,
         minHeight: "100vh",
-        maxWidth: 1100,
+        maxWidth: 2100,
         margin: "0 auto",
         color: "#184022",
         fontFamily: "Arial, sans-serif",
@@ -172,6 +172,7 @@ export default function FarmerDashboard() {
 <br/>
         <section style={{ textAlign: "center" }}>
           <h1>From here you can buy your Requirements With Quality👇</h1>
+          <br/>
           <button
             onClick={handleShopClick}
             style={{

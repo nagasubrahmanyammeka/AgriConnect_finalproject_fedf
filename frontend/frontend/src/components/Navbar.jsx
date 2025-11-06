@@ -1,22 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isUserBtnHovered, setUserBtnHovered] = useState(false);
 
   const handleLogout = () => {
     logout();
     navigate("/login");
   };
 
-  // Internal styles
   const styles = {
     navbar: {
       background: "linear-gradient(90deg, #276d2c, #2e8740)",
       padding: "12px 0",
       boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+      position: "sticky",
+      top: 0,
+      zIndex: 1000,
     },
     container: {
       maxWidth: "1200px",
@@ -29,11 +32,16 @@ const Navbar = () => {
     logoContainer: {
       display: "flex",
       alignItems: "center",
-      color: "white",
       gap: "10px",
+      cursor: "pointer",
     },
     logoImg: {
       height: "50px",
+    },
+    logoText: {
+      color: "white",
+      fontSize: "1.5rem",
+      fontWeight: "bold",
     },
     menu: {
       listStyle: "none",
@@ -43,68 +51,43 @@ const Navbar = () => {
       margin: 0,
       padding: 0,
     },
-    link: {
+    link: (color) => ({
+      color,
       textDecoration: "none",
       fontSize: "1.1rem",
       fontWeight: 600,
-      position: "relative",
-      transition: "all 0.3s ease",
-    },
-    home: {
-      color: "#f0f8ff",
-    },
-    shop: {
-      color: "#fff8dc",
-    },
-    contact: {
-      color: "#e6e6fa",
-    },
-    userButton: {
-      background: "transparent",
-      border: "2px solid white",
-      color: "white",
-      padding: "6px 15px",
+      transition: "color 0.3s, text-decoration 0.3s",
+    }),
+    button: (bg, color, border = true) => ({
+      background: bg,
+      color,
+      border: border ? "1px solid white" : "none",
+      padding: "6px 14px",
       borderRadius: "6px",
       cursor: "pointer",
       fontWeight: 600,
       fontSize: "1rem",
       transition: "all 0.3s ease",
-    },
-    userButtonHover: {
-      background: "white",
-      color: "#2e8740",
-    },
-    button: {
-      background: "transparent",
-      border: "1px solid white",
-      color: "white",
-      padding: "6px 12px",
-      borderRadius: "6px",
-      cursor: "pointer",
-      fontWeight: 500,
-      transition: "all 0.3s ease",
-    },
-    buttonHover: {
-      background: "white",
-      color: "#2e8740",
-    },
+      textDecoration: "none",
+    }),
   };
-
-  const [isUserBtnHovered, setUserBtnHovered] = React.useState(false);
 
   return (
     <nav style={styles.navbar}>
       <div style={styles.container}>
-        <div style={styles.logoContainer}>
+        <div
+          style={styles.logoContainer}
+          onClick={() => navigate("/")}
+        >
           <img src="/logo.png" alt="Logo" style={styles.logoImg} />
-          <h1>AgriConnect</h1>
+          <h1 style={styles.logoText}>AgriConnect</h1>
         </div>
 
         <ul style={styles.menu}>
           <li>
             <Link
               to="/"
-              style={{ ...styles.link, ...styles.home }}
+              style={styles.link("#f0f8ff")}
               onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
               onMouseOut={(e) => (e.target.style.textDecoration = "none")}
             >
@@ -115,7 +98,7 @@ const Navbar = () => {
           <li>
             <Link
               to="/shop"
-              style={{ ...styles.link, ...styles.shop }}
+              style={styles.link("#fff8dc")}
               onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
               onMouseOut={(e) => (e.target.style.textDecoration = "none")}
             >
@@ -126,7 +109,7 @@ const Navbar = () => {
           <li>
             <Link
               to="/contact"
-              style={{ ...styles.link, ...styles.contact }}
+              style={styles.link("#e6e6fa")}
               onMouseOver={(e) => (e.target.style.textDecoration = "underline")}
               onMouseOut={(e) => (e.target.style.textDecoration = "none")}
             >
@@ -139,8 +122,12 @@ const Navbar = () => {
               <li>
                 <button
                   style={{
-                    ...styles.userButton,
-                    ...(isUserBtnHovered ? styles.userButtonHover : {}),
+                    ...styles.button(
+                      "transparent",
+                      isUserBtnHovered ? "#2e8740" : "white"
+                    ),
+                    border: "2px solid white",
+                    background: isUserBtnHovered ? "white" : "transparent",
                   }}
                   onMouseEnter={() => setUserBtnHovered(true)}
                   onMouseLeave={() => setUserBtnHovered(false)}
@@ -149,16 +136,17 @@ const Navbar = () => {
                   {user.name}
                 </button>
               </li>
+
               <li>
                 <button
-                  style={styles.button}
+                  style={styles.button("transparent", "white")}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.background = styles.buttonHover.background;
-                    e.currentTarget.style.color = styles.buttonHover.color;
+                    e.currentTarget.style.background = "white";
+                    e.currentTarget.style.color = "#2e8740";
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.background = styles.button.background;
-                    e.currentTarget.style.color = styles.button.color;
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "white";
                   }}
                   onClick={handleLogout}
                 >
@@ -171,14 +159,14 @@ const Navbar = () => {
               <li>
                 <Link
                   to="/login"
-                  style={{ ...styles.button, textDecoration: "none", padding: "6px 14px" }}
+                  style={styles.button("transparent", "white")}
                   onMouseOver={(e) => {
-                    e.currentTarget.style.background = styles.buttonHover.background;
-                    e.currentTarget.style.color = styles.buttonHover.color;
+                    e.currentTarget.style.background = "white";
+                    e.currentTarget.style.color = "#2e8740";
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.background = styles.button.background;
-                    e.currentTarget.style.color = styles.button.color;
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "white";
                   }}
                 >
                   Login
@@ -188,19 +176,13 @@ const Navbar = () => {
               <li>
                 <Link
                   to="/register"
-                  style={{
-                    ...styles.button,
-                    background: "#fff",
-                    color: "#2e8740",
-                    textDecoration: "none",
-                    padding: "6px 14px",
-                  }}
+                  style={styles.button("white", "#2e8740")}
                   onMouseOver={(e) => {
                     e.currentTarget.style.background = "#2e8740";
                     e.currentTarget.style.color = "#fff";
                   }}
                   onMouseOut={(e) => {
-                    e.currentTarget.style.background = "#fff";
+                    e.currentTarget.style.background = "white";
                     e.currentTarget.style.color = "#2e8740";
                   }}
                 >

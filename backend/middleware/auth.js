@@ -1,45 +1,44 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 const auth = async (req, res, next) => {
   try {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-    if (!token) {
-      return res.status(401).json({ message: 'No authentication token, access denied' });
+    const authHeader = req.header("Authorization");
+    console.log('Auth header received:', authHeader); // Debug log
+    
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No authentication token, access denied" });
     }
 
+    const token = authHeader.split(" ")[1];
+    console.log('Token extracted:', token ? 'Token exists' : 'No token'); // Debug
+
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
+    console.log('Decoded token:', decoded); // Debug
+    
+    if (!decoded?.userId) {
+      return res.status(401).json({ message: "Invalid token payload" });
+    }
+
+    const user = await User.findById(decoded.userId).select("-password");
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(401).json({ message: "User not found" });
     }
 
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Token is not valid' });
+    console.error("Auth Middleware Error:", error.message);
+    
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({ message: "Token expired" });
+    }
+    
+    res.status(401).json({ message: "Token is not valid or expired" });
   }
 };
 
-const adminAuth = async (req, res, next) => {
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied. Admin only.' });
-  }
-  next();
-};
-
-const farmerAuth = async (req, res, next) => {
-  if (req.user.role !== 'farmer' && req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied. Farmers only.' });
-  }
-  next();
-};
-
-const expertAuth = async (req, res, next) => {
-  if (req.user.role !== 'expert' && req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Access denied. Experts only.' });
-  }
-  next();
-};
-
-module.exports = { auth, adminAuth, farmerAuth, expertAuth };
+module.exports = { auth };

@@ -1,3 +1,4 @@
+
 /* Reset and Base Styles */
 * {
   margin: 0;
@@ -617,9 +618,7 @@ select.form-control {
   color: #333;
 }
 
-.users-table tbody tr:hover {
-  background: #f9f9f9;
-}
+
 
 /* Status Badge */
 .status {
