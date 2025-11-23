@@ -133,7 +133,8 @@ const Navbar = () => {
                   onMouseLeave={() => setUserBtnHovered(false)}
                   onClick={() => navigate("/profile")}
                 >
-                  {user.name}
+                  {/* Show name or "My Profile" if name is missing */}
+                  {user.name || "My Profile"}
                 </button>
               </li>
 

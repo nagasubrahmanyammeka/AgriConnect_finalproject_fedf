@@ -89,6 +89,7 @@ export default function AuthProvider({ children }) {
 
       // Save to localStorage
       localStorage.setItem("token", jwtToken);
+      
       localStorage.setItem("user", JSON.stringify(userData));
 
       // Set axios default header

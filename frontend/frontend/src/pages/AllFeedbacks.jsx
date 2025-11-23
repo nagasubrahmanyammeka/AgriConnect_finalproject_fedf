@@ -38,7 +38,6 @@ function AllFeedbacks() {
               boxShadow: "0 2px 7px rgba(0,0,0,0.06)",
             }}
           >
-            <p>------------------</p>
             <span><strong>Name:</strong> {fb.name}</span> <br />
             <span><strong>Email ID: </strong>{fb.email}</span> <br />
             <span><strong>Comment: </strong>{fb.message}</span>

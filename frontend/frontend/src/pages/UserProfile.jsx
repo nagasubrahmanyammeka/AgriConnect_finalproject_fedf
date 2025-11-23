@@ -14,76 +14,55 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchUserDetails = async () => {
       if (authLoading) return;
-
-      if (!user || !user._id) {
+      if (!user) {
         setError("User not logged in. Redirecting to login...");
         setLoading(false);
-        setTimeout(() => navigate("/login"), 2000);
+        setTimeout(() => navigate("/login"), 1500);
         return;
       }
-
       try {
         const token = localStorage.getItem("token");
-        
-        console.log("Fetching user with ID:", user._id);
-        console.log("Token exists:", !!token);
-
         if (!token) {
           setError("No authentication token found. Please login again.");
           setLoading(false);
           setTimeout(() => {
             logout();
             navigate("/login");
-          }, 2000);
+          }, 1500);
           return;
         }
-
-        const response = await fetch(`http://localhost:5000/api/users/${user._id}`, {
-          method: 'GET',
+        const response = await fetch("http://localhost:5000/api/auth/me", {
+          method: "GET",
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         });
-
-        console.log("Response status:", response.status);
-
         if (response.status === 401) {
-          // Token expired or invalid
           setError("Session expired. Please login again.");
           setLoading(false);
           setTimeout(() => {
             logout();
             navigate("/login");
-          }, 2000);
+          }, 1500);
           return;
         }
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error("Failed to fetch profile.");
         const data = await response.json();
-        console.log("User data received:", data);
-        
-        setDetails(data);
+        setDetails(data.user);
         setError("");
       } catch (err) {
-        console.error("Fetch error:", err);
         setError(`Failed to load user details: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
-
     fetchUserDetails();
   }, [user, authLoading, navigate, logout]);
 
   if (loading || authLoading) {
     return <div style={styles.loading}>Loading profile...</div>;
   }
-
   if (error) {
     return (
       <div style={styles.error}>
@@ -95,116 +74,142 @@ export default function UserProfile() {
       </div>
     );
   }
-
   if (!details) return null;
 
-  const name = details.name || details.username || "Not provided";
-  const role = details.role || "User";
-  const email = details.email || "Not provided";
-  const phone = details.phone || "Not provided";
-  const mobile = details.mobile || phone;
-  const address = details.address || details.location || "Not provided";
-  
-  let joinDate = "Not provided";
-  if (details.createdAt) {
-    const dt = new Date(details.createdAt);
-    joinDate = isNaN(dt.getTime()) ? "Not provided" : dt.toLocaleDateString();
-  }
+  const name = details.name || "";
+  const email = details.email || "";
+  const phone = details.phone || "";
+  const location = details.location || "";
+  const role = details.role || "";
 
   return (
-    <div style={styles.container}>
-      <div style={styles.leftCard}>
-        <img src={defaultAvatar} alt="User Avatar" style={styles.avatar} />
-        <h2 style={{ margin: "10px 0 5px" }}>{name}</h2>
-        <p style={{ color: "#666", margin: "5px 0", textTransform: "capitalize" }}>{role}</p>
-        <p style={{ color: "#999" }}>{address}</p>
-      </div>
-      
-      <div style={styles.rightCard}>
-        <div style={styles.row}>
-          <label style={styles.label}>Full Name</label>
-          <span style={styles.value}>{name}</span>
+    <div style={styles.pageBg}>
+      <div style={styles.card}>
+        <div style={styles.profileHeading}>Profile</div>
+        <div style={styles.profileSubtext}>
+          Manage your account information
         </div>
-        <div style={styles.row}>
-          <label style={styles.label}>Email</label>
-          <span style={styles.value}>{email}</span>
+        <div style={{ textAlign: "center", margin: "26px 0 18px 0" }}>
+          <img
+            src={details.profileImage || defaultAvatar}
+            alt="User Avatar"
+            style={styles.avatar}
+          />
+          <div style={styles.name}>{name}</div>
+          <div style={styles.role}>
+            {role.charAt(0).toUpperCase() + role.slice(1)}
+          </div>
         </div>
-        <div style={styles.row}>
-          <label style={styles.label}>Role</label>
-          <span style={styles.value} style={{textTransform: "capitalize"}}>{role}</span>
-        </div>
-        <div style={styles.row}>
-          <label style={styles.label}>Phone</label>
-          <span style={styles.value}>{phone}</span>
-        </div>
-        <div style={styles.row}>
-          <label style={styles.label}>Mobile</label>
-          <span style={styles.value}>{mobile}</span>
-        </div>
-        <div style={styles.row}>
-          <label style={styles.label}>Address</label>
-          <span style={styles.value}>{address}</span>
-        </div>
-        <div style={styles.row}>
-          <label style={styles.label}>Joined On</label>
-          <span style={styles.value}>{joinDate}</span>
-        </div>
+        // In your render block:
+<div style={styles.fieldGroup}>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Full Name</label>
+    <input disabled style={styles.input} value={name} placeholder="Full Name" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Email</label>
+    <input disabled style={styles.input} value={email} placeholder="Email" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Phone</label>
+    <input disabled style={styles.input} value={phone} placeholder="Phone" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Location</label>
+    <input disabled style={styles.input} value={location} placeholder="Locatin" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Role</label>
+    <input disabled style={styles.input} value={role ? role.charAt(0).toUpperCase() + role.slice(1) : ''} placeholder="Role" />
+  </div>
+</div>
+
       </div>
     </div>
   );
 }
 
 const styles = {
-  container: {
+  pageBg: {
+    minHeight: "calc(100vh - 80px)",
+    background: "#fafaf6",
     display: "flex",
     justifyContent: "center",
-    alignItems: "flex-start",
-    backgroundColor: "#fff",
-    borderRadius: "15px",
-    boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-    overflow: "hidden",
-    maxWidth: "800px",
-    margin: "50px auto",
+    alignItems: "center",
   },
-  leftCard: {
-    width: "40%",
-    textAlign: "center",
-    backgroundColor: "#f8f9fa",
-    padding: "30px",
-    borderRight: "1px solid #ddd",
-  },
-  avatar: {
-    width: "120px",
-    height: "120px",
-    borderRadius: "50%",
-    marginBottom: "10px",
-  },
-  rightCard: {
-    width: "60%",
-    padding: "30px",
-  },
-  row: {
+  card: {
+    background: "#fff",
+    borderRadius: "16px",
+    width: "470px",
+    boxShadow: "0 2px 14px rgba(0,0,0,0.08)",
+    padding: "32px 32px 32px 32px",
     display: "flex",
-    justifyContent: "space-between",
+    flexDirection: "column",
+    alignItems: "stretch",
+  },
+  profileHeading: {
+    fontWeight: "bold",
+    fontSize: "1.45rem",
+    color: "#153518",
+    marginBottom: "7px",
+  },
+  profileSubtext: {
+    fontSize: "1rem",
+    color: "#72a882",
     marginBottom: "12px",
   },
-  label: {
+  avatar: {
+    width: "80px",
+    height: "80px",
+    borderRadius: "50%",
+    margin: "8px auto 7px auto",
+    display: "block",
+  },
+  name: {
+    fontSize: "1.13rem",
     fontWeight: "bold",
-    color: "#333",
-  },
-  value: {
-    color: "#555",
-  },
-  loading: {
+    color: "#226147",
+    marginTop: "8px",
     textAlign: "center",
-    padding: "40px",
-    fontSize: "1.2rem",
   },
-  error: {
-    color: "red",
+  role: {
+    color: "#8da886",
+    fontSize: "1.04rem",
+    marginBottom: "5px",
     textAlign: "center",
-    padding: "40px",
   },
+  fieldGroup: {
+    marginTop: "4px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "16px",
+  },
+  inputRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "15px",
+  },
+  inputLabel: {
+    width: "120px",
+    minWidth: "120px",
+    fontWeight: "500",
+    color: "#153518",
+    fontSize: "1rem",
+    textAlign: "left",
+  },
+  input: {
+    flex: 1,
+    fontSize: "1.04rem",
+    padding: "10px 12px",
+    borderRadius: "7px",
+    border: "1px solid #eaeaea",
+    background: "#f6f6f6",
+    color: "#55786e",
+    outline: "none",
+    marginBottom: "0",
+  },
+  loading: { textAlign: "center", padding: "40px", fontSize: "1.2rem" },
+  error: { color: "red", textAlign: "center", padding: "40px" },
   retryBtn: {
     marginTop: "20px",
     padding: "10px 20px",

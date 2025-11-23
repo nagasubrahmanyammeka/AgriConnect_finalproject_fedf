@@ -1,34 +1,39 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');                    // ✅ ADDED
 const connectDB = require('./config/db');
-const userRoutes = require('./routes/user');  // Import your route
 
 dotenv.config();
 
-const app = express(); // <-- Declare app first
+const app = express();
 
 // Connect database
 connectDB();
 
 // Middleware setup
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Register routes (after app declaration)
-app.use('/api/users', userRoutes);
+// Static uploads folder (moved before routes)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Other routes
+// Register ALL routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/users', require('./routes/user'));
 app.use('/api/feedback', require('./routes/feedback'));
 app.use('/api/guidance', require('./routes/guidance'));
-app.use('/api/auth', require('./routes/auth'));
+app.use('/api/suggestions', require('./routes/suggestions'));    // ✅ ADDED
+app.use('/api/content', require('./routes/content'));            // ✅ ADDED
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/farmer', require('./routes/farmer'));
 app.use('/api/expert', require('./routes/expert'));
-
-// Static uploads folder
-app.use('/uploads', express.static('uploads'));
 
 // Health check
 app.get('/api/health', (req, res) => {

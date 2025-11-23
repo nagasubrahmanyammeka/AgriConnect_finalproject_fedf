@@ -384,7 +384,7 @@ select.form-control {
 }
 
 .footer-container {
-  max-width: 1400px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 0 40px;
 }
@@ -736,7 +736,7 @@ body, #root {
 
 .form-container {
   background: rgba(44, 160, 74, 0.95); /* Transparent green for visual depth */
-  max-width: 450px;
+  max-width: 500px;
   margin: 40px auto;
   padding: 30px 22px 24px 22px;
   border-radius: 18px;

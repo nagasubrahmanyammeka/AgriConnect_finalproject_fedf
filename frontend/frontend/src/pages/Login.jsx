@@ -5,170 +5,163 @@ import { useAuth } from '../context/AuthContext';
 const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ username: '', password: '', role: '' });
+  const [formData, setFormData] = useState({ 
+    name: '',        // Changed from email to name
+    password: '', 
+    role: '' 
+  });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login(formData.username, formData.password, formData.role);
+    setError('');
+    setLoading(true);
 
-    if (!result.success || !result.user || result.user.role !== formData.role) {
-      setError('Invalid credentials');
-      return;
-    }
+    try {
+      // Pass name, not email
+      const result = await login(formData.name, formData.password, formData.role);
 
-    // Redirect based on role
-    switch (formData.role) {
-      case 'admin':
-        navigate('/admin');
-        break;
-      case 'farmer':
-        navigate('/farmer');
-        break;
-      case 'expert':
-        navigate('/expert');
-        break;
-      case 'public':
-        navigate('/public');
-        break;
-      default:
-        navigate('/');
+      if (!result.success) {
+        setError(result.message || 'Invalid credentials');
+        setLoading(false);
+        return;
+      }
+
+      // Navigate based on role
+      const userRole = result.user.role;
+      switch (userRole) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'farmer':
+          navigate('/farmer');
+          break;
+        case 'expert':
+          navigate('/expert');
+          break;
+        case 'public':
+          navigate('/public');
+          break;
+        default:
+          navigate('/');
+      }
+    } catch (err) {
+      setError('Login failed. Please try again.');
+      setLoading(false);
     }
   };
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   return (
-    <div className="form-container" style={{ textAlign: 'left', maxWidth: '400px', margin: 'auto' }}>
-      <h2>Login</h2>
+    <div className="form-container" style={{ textAlign: 'left', maxWidth: '400px', margin: '50px auto', padding: '20px' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Login to AgriConnect</h2>
+      
       {error && (
-        <div
-          className="alert-error"
-          style={{
-            color: 'red',
-            marginBottom: '10px',
-            fontWeight: 'bold',
-          }}
-        >
+        <div style={{
+          color: '#d32f2f',
+          marginBottom: '15px',
+          padding: '12px',
+          backgroundColor: '#ffebee',
+          borderRadius: '6px',
+          border: '1px solid #ef5350',
+         }}>
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-        <label style={{ display: 'block', marginBottom: '10px' }}>
-          <span>Username:</span>
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+            Username:
+          </label>
           <input
-            name="username"
-            value={formData.username}
+            name="name"         // Changed here
+            type="text"         // Changed here
+            value={formData.name}
             onChange={handleChange}
+            placeholder="Enter your username"  // Changed here
             required
             style={{
-              marginLeft: '10px',
-              padding: '5px',
-              borderRadius: '4px',
+              width: '100%',
+              padding: '10px',
+              borderRadius: '6px',
               border: '1px solid #ccc',
             }}
           />
-        </label>
+        </div>
 
-        <label style={{ display: 'block', marginBottom: '10px' }}>
-          <span>Password:</span>
+        <div style={{ marginBottom: '15px' }}>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
+            Password:
+          </label>
           <input
             name="password"
             type="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Enter your password"
             required
             style={{
-              marginLeft: '10px',
-              padding: '5px',
-              borderRadius: '4px',
+              width: '100%',
+              padding: '10px',
+              borderRadius: '6px',
               border: '1px solid #ccc',
             }}
           />
-        </label>
+        </div>
 
-        {/* ---------- Aligned Radio Section ---------- */}
-        <div className="role-select" style={{ marginTop: '20px' }}>
-          <span
-            style={{
-              fontWeight: 'bold',
-              display: 'block',
-              marginBottom: '10px',
-            }}
-          >
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: '500' }}>
             Login As:
-          </span>
-
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'auto 1fr',
-              alignItems: 'center',
-              rowGap: '10px',
-              columnGap: '10px',
-            }}
-          >
-            <input
-              type="radio"
-              name="role"
-              value="admin"
-              checked={formData.role === 'admin'}
-              onChange={handleChange}
-              required
-            />
-            <label style={{ whiteSpace: 'nowrap' }}>Admin</label>
-
-            <input
-              type="radio"
-              name="role"
-              value="farmer"
-              checked={formData.role === 'farmer'}
-              onChange={handleChange}
-            />
-            <label style={{ whiteSpace: 'nowrap' }}>Farmer</label>
-
-            <input
-              type="radio"
-              name="role"
-              value="expert"
-              checked={formData.role === 'expert'}
-              onChange={handleChange}
-            />
-            <label style={{ whiteSpace: 'nowrap' }}>Agriculture Expert</label>
-
-            <input
-              type="radio"
-              name="role"
-              value="public"
-              checked={formData.role === 'public'}
-              onChange={handleChange}
-            />
-            <label style={{ whiteSpace: 'nowrap' }}>Public</label>
+          </label>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'auto 1fr',
+            alignItems: 'center',
+            rowGap: '12px',
+            columnGap: '10px',
+          }}>
+            <input type="radio" id="admin" name="role" value="admin" 
+              checked={formData.role === 'admin'} onChange={handleChange} required />
+            <label htmlFor="admin">Admin</label>
+            <input type="radio" id="farmer" name="role" value="farmer" 
+              checked={formData.role === 'farmer'} onChange={handleChange} />
+            <label htmlFor="farmer">Farmer</label>
+            <input type="radio" id="expert" name="role" value="expert" 
+              checked={formData.role === 'expert'} onChange={handleChange} />
+            <label htmlFor="expert">Agriculture Expert</label>
+            <input type="radio" id="public" name="role" value="public" 
+              checked={formData.role === 'public'} onChange={handleChange} />
+            <label htmlFor="public">Public</label>
           </div>
         </div>
-        {/* ------------------------------------------- */}
 
         <button
           type="submit"
+          disabled={loading}
           style={{
-            marginTop: '20px',
-            padding: '8px 16px',
-            backgroundColor: '#2e7d32',
+            width: '100%',
+            padding: '12px',
+            backgroundColor: loading ? '#ccc' : '#2e7d32',
             color: 'white',
             border: 'none',
             borderRadius: '6px',
-            cursor: 'pointer',
+            cursor: loading ? 'not-allowed' : 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
           }}
         >
-          LOGIN
+          {loading ? 'Logging in...' : 'LOGIN'}
         </button>
       </form>
 
-      <div className="form-link" style={{ marginTop: '15px', textAlign: 'center' }}>
-        Don't Have an Account?{' '}
-        <a href="/register" style={{ color: '#0d47a1', textDecoration: 'none' }}>
+      <div style={{ marginTop: '20px', textAlign: 'center' }}>
+        Don't have an account?{' '}
+        <a href="/register" style={{ color: '#2e7d32', textDecoration: 'none', fontWeight: '500' }}>
           Register
         </a>
       </div>
