@@ -81,9 +81,8 @@ export default function UserProfile() {
   const phone = details.phone || "";
   const location = details.location || "";
   const role = details.role || "";
-
   // Role-based dashboard navigation
- function handleDashboard() {
+  function handleDashboard() {
   const roleClean = role.trim().toLowerCase();
   if (roleClean === "farmer") {
     navigate("/farmer");
@@ -103,6 +102,8 @@ export default function UserProfile() {
     <div style={styles.pageBg}>
       <div style={styles.card}>
         <div style={styles.profileHeading}>Profile</div>
+        <div style={styles.profileSubtext}>
+        </div>
         <div style={{ textAlign: "center", margin: "26px 0 18px 0" }}>
           <img
             src={details.profileImage || defaultAvatar}
@@ -111,53 +112,54 @@ export default function UserProfile() {
           />
           <div style={styles.name}>{name}</div>
           <div style={styles.role}>
-            {role ? role.charAt(0).toUpperCase() + role.slice(1) : ""}
+            {role.charAt(0).toUpperCase() + role.slice(1)}
           </div>
         </div>
-        <div style={styles.fieldGroup}>
-          <div style={styles.inputRow}>
-            <label style={styles.inputLabel}>Full Name</label>
-            <input disabled style={styles.input} value={name} placeholder="Full Name" />
-          </div>
-          <div style={styles.inputRow}>
-            <label style={styles.inputLabel}>Email</label>
-            <input disabled style={styles.input} value={email} placeholder="Email" />
-          </div>
-          <div style={styles.inputRow}>
-            <label style={styles.inputLabel}>Phone</label>
-            <input disabled style={styles.input} value={phone} placeholder="Phone" />
-          </div>
-          <div style={styles.inputRow}>
-            <label style={styles.inputLabel}>Location</label>
-            <input disabled style={styles.input} value={location} placeholder="Location" />
-          </div>
-          <div style={styles.inputRow}>
-            <label style={styles.inputLabel}>Role</label>
-            <input disabled style={styles.input} value={role ? role.charAt(0).toUpperCase() + role.slice(1) : ''} placeholder="Role" />
-          </div>
-        </div>
-        <button style={styles.dashboardBtn} onClick={handleDashboard}>
+<div style={styles.fieldGroup}>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Full Name</label>
+    <input disabled style={styles.input} value={name} placeholder="Full Name" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Email</label>
+    <input disabled style={styles.input} value={email} placeholder="Email" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Phone</label>
+    <input disabled style={styles.input} value={phone} placeholder="Phone" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Location</label>
+    <input disabled style={styles.input} value={location} placeholder="Locatin" />
+  </div>
+  <div style={styles.inputRow}>
+    <label style={styles.inputLabel}>Role</label>
+    <input disabled style={styles.input} value={role ? role.charAt(0).toUpperCase() + role.slice(1) : ''} placeholder="Role" />
+  </div>
+</div>
+<button style={styles.dashboardBtn} onClick={handleDashboard}>
           Go To Dashboard
         </button>
       </div>
+      
     </div>
   );
 }
 
 const styles = {
- /* pageBg: {
+  pageBg: {
     minHeight: "calc(100vh - 80px)",
-    background: "#fafaf6",
+    background: "#067a31ff",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-  },*/
+    borderRadius: "16px"
+  },
   card: {
-    position:"fixed",
-    left: "500px",
     background: "#fff",
     borderRadius: "16px",
-    width: "750px",
+    width: "800px",
+    height: "650px",
     boxShadow: "0 2px 14px rgba(0,0,0,0.08)",
     padding: "32px 32px 32px 32px",
     display: "flex",
@@ -169,6 +171,11 @@ const styles = {
     fontSize: "1.45rem",
     color: "#153518",
     marginBottom: "7px",
+  },
+  profileSubtext: {
+    fontSize: "1rem",
+    color: "#72a882",
+    marginBottom: "12px",
   },
   avatar: {
     width: "80px",
@@ -237,10 +244,10 @@ const styles = {
     background: "#27a844",
     color: "#fff",
     border: "none",
-    borderRadius: "25px",
+    borderRadius: "8px",
     fontWeight: "bold",
     fontSize: "1rem",
     cursor: "pointer",
-    width: "80%",
+    width: "100%",
   },
 };

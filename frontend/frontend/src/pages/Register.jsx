@@ -182,7 +182,15 @@ const Register = () => {
               columnGap: '10px',
             }}
           >
-
+           {/*}
+            <input
+              type="radio"
+              name="role"
+              value="admin"
+              checked={formData.role === 'admin'}
+              onChange={handleChange}
+            />
+            <label style={{ whiteSpace: 'nowrap' }}>Admin</label>*/}
             <input
               type="radio"
               name="role"
@@ -191,6 +199,7 @@ const Register = () => {
               onChange={handleChange}
             />
             <label style={{ whiteSpace: 'nowrap' }}>Farmer</label>
+
 
             <input
               type="radio"

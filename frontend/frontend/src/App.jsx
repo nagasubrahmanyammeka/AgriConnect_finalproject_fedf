@@ -4,6 +4,7 @@ import AuthProvider from "./context/AuthContext";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PhComment from "./pages/ph"; // adjust path as needed
 
 // Public Pages
 import Home from "./pages/Home";
@@ -46,6 +47,8 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/products" element={<Products />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/ph" element={<PhComment />} />
+
 
               {/* ✅ PROTECTED: User Profile Route */}
               <Route

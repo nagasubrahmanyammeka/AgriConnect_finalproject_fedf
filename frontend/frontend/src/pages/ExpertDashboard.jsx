@@ -72,7 +72,6 @@ const ExpertDashboard = () => {
             </Link>
           </div>
 
-          {/* ✅ Create Content Card */}
           <div
             className="card"
             style={{

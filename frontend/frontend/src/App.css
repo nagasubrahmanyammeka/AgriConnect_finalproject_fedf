@@ -1,3 +1,12 @@
+@media (max-width: 768px) {
+  .form-container {
+    width: 95vw;
+    margin: 20px auto;
+    padding: 24px 16px;
+    box-sizing: border-box;
+  }
+}
+
 
 /* Reset and Base Styles */
 * {
@@ -347,6 +356,8 @@ select.form-control {
 .hero {
   text-align: center;
   padding: 120px 40px;
+    -webkit-user-drag: none;
+
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.2) 100%);
 }
 
@@ -594,6 +605,7 @@ select.form-control {
   }
 }
 
+
 /* Table Styles */
 .table-container {
   overflow-x: auto;
@@ -735,16 +747,25 @@ body, #root {
 }
 
 .form-container {
-  background: rgba(44, 160, 74, 0.95); /* Transparent green for visual depth */
-  max-width: 500px;
+  width: 600px; /* Set a fixed larger width */
   margin: 40px auto;
-  padding: 30px 22px 24px 22px;
+  padding: 40px 30px; /* Increase padding */
+  background: rgba(44, 160, 74, 0.95);
   border-radius: 18px;
   box-shadow: 0 6px 24px rgba(0,0,0,0.14);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
+.form-container input,
+.form-container button {
+  width: 100%; /* full width inputs/buttons */
+  padding: 14px 10px; /* bigger clickable area */
+  font-size: 18px; /* larger text */
+  margin-bottom: 16px; /* spacing */
+}
+
 
 .form-container h2 {
   text-align: center;
